@@ -79,7 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           CupertinoButton(
             onPressed: () {
-              Navigation.toScreen(context: context, screen: StationsScreen());
+              Navigation.toScreen(
+                context: context,
+                screen: StationsScreen(),
+              );
             },
             child: Text(
               'Stations',
