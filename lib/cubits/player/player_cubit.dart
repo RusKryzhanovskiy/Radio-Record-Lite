@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:record/blocs/player/player_state.dart';
+import 'package:record/cubits/player/player_state.dart';
 import 'package:record/models/station.dart';
 import 'package:record/services/audio_service.dart';
 import 'package:record/services/radio_record_service.dart';
@@ -18,12 +18,17 @@ class PlayerCubit extends Cubit<PlayerState> {
     final stableState = state;
     try {
       await _updateTracks();
+      Timer.periodic(Duration(seconds: 10), (_) => _updateTracks());
 
       _audioService.stateStream().listen((playerState) {
         emit(state.copyWith(playerState: playerState));
       });
 
-      Timer.periodic(Duration(seconds: 10), (_) => _updateTracks());
+      final stations = await _recordService.stations();
+      emit(state.copyWith(
+        selectedStation: stations.result?.stations?.first,
+        playerState: AudioPlayerState.pause,
+      ));
     } catch (error) {
       emit(PlayerStateFailure(error: error.toString()));
       emit(stableState);

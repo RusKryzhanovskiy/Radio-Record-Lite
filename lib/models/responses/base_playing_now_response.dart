@@ -3,7 +3,6 @@ import 'package:record/models/base/error.dart';
 import 'package:record/models/playing_now.dart';
 
 part 'base_playing_now_response.freezed.dart';
-
 part 'base_playing_now_response.g.dart';
 
 @freezed

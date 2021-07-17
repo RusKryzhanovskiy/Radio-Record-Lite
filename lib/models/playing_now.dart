@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:record/models/track.dart';
 
 part 'playing_now.freezed.dart';
-
 part 'playing_now.g.dart';
 
 @freezed

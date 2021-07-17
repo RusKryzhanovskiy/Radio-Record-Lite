@@ -3,7 +3,6 @@ import 'package:record/models/banner.dart';
 import 'package:record/models/base/error.dart';
 
 part 'base_banners_response.freezed.dart';
-
 part 'base_banners_response.g.dart';
 
 @freezed

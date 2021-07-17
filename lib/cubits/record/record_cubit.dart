@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:record/blocs/record/record_state.dart';
+import 'package:record/cubits/record/record_state.dart';
 import 'package:record/models/responses/base_banners_response.dart';
 import 'package:record/models/responses/base_stations_response.dart';
 import 'package:record/services/radio_record_service.dart';

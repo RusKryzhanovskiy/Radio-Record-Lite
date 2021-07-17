@@ -1,36 +1,45 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:record/blocs/player/player_bloc.dart';
-import 'package:record/blocs/player/player_state.dart';
+import 'package:record/cubits/player/player_cubit.dart';
+import 'package:record/cubits/player/player_state.dart';
 import 'package:record/services/audio_service.dart';
+import 'package:record/widgets/custom_network_image.dart';
 
-class BottomPlayerBar extends StatelessWidget {
+class BottomPlayerBar extends StatefulWidget {
   const BottomPlayerBar({Key? key}) : super(key: key);
+
+  @override
+  _BottomPlayerBarState createState() => _BottomPlayerBarState();
+}
+
+class _BottomPlayerBarState extends State<BottomPlayerBar> {
+  late final PlayerCubit playerCubit;
+
+  @override
+  void initState() {
+    playerCubit = BlocProvider.of<PlayerCubit>(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
-      bloc: BlocProvider.of<PlayerCubit>(context),
+      bloc: playerCubit,
       builder: (BuildContext context, PlayerState state) {
         if (state.selectedStation == null) {
           return SizedBox(height: 0);
         }
 
-        return buildBody(context: context, state: state);
+        return buildBody(state);
       },
     );
   }
 
-  Widget buildBody({
-    required BuildContext context,
-    required PlayerState state,
-  }) {
+  Widget buildBody(PlayerState state) {
     final track = state.playingNow
-        ?.firstWhere(
-          (track) => track?.id == state.selectedStation?.id,
-          orElse: () => null,
-        )
+        ?.firstWhereOrNull((track) => track?.id == state.selectedStation?.id)
         ?.track;
 
     return Card(
@@ -48,7 +57,7 @@ class BottomPlayerBar extends StatelessWidget {
                   width: 65,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(4),
-                    child: Image.network(track?.image200 ?? ''),
+                    child: CustomNetworkImage(track?.image200),
                   ),
                 ),
               Expanded(
@@ -64,16 +73,19 @@ class BottomPlayerBar extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
-                      Text(
-                        track?.artist ?? '',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                      Padding(
+                        padding: EdgeInsetsDirectional.only(top: 4, start: 1),
+                        child: Text(
+                          track?.artist ?? '',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
                       Padding(
                         padding: EdgeInsetsDirectional.only(top: 4.0),
                         child: Text(
-                          state.selectedStation?.title ?? '',
+                          '• ${state.selectedStation?.title}',
                           style: TextStyle(fontSize: 10, color: Colors.grey),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
@@ -83,22 +95,9 @@ class BottomPlayerBar extends StatelessWidget {
                   ),
                 ),
               ),
-              if (MediaQuery.of(context).size.width > 650)
-                Slider(
-                  onChanged: (double volume) {
-                    BlocProvider.of<PlayerCubit>(context).setVolume(volume);
-                  },
-                  value: BlocProvider.of<PlayerCubit>(context).state.volume,
-                  min: 0.0,
-                  max: 1.0,
-                  activeColor: Colors.grey,
-                ),
               Padding(
                 padding: const EdgeInsetsDirectional.only(end: 8),
-                child: buildPlayerState(
-                  context: context,
-                  playerState: state.playerState,
-                ),
+                child: buildPlayerState(state.playerState),
               ),
             ],
           ),
@@ -107,12 +106,7 @@ class BottomPlayerBar extends StatelessWidget {
     );
   }
 
-  Widget buildPlayerState({
-    required BuildContext context,
-    required AudioPlayerState playerState,
-  }) {
-    final cubit = BlocProvider.of<PlayerCubit>(context);
-
+  Widget buildPlayerState(AudioPlayerState playerState) {
     if (playerState == AudioPlayerState.loading) {
       return Padding(
         padding: const EdgeInsets.all(10.0),
@@ -122,7 +116,11 @@ class BottomPlayerBar extends StatelessWidget {
 
     return IconButton(
       onPressed: () {
-        playerState == AudioPlayerState.playing ? cubit.stop() : cubit.play();
+        if (playerState == AudioPlayerState.playing) {
+          playerCubit.stop();
+        } else {
+          playerCubit.play();
+        }
       },
       icon: Icon(
         playerState == AudioPlayerState.playing

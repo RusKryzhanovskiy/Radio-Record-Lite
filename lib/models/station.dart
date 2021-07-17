@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:record/models/genre.dart';
 
 part 'station.freezed.dart';
-
 part 'station.g.dart';
 
 @freezed
