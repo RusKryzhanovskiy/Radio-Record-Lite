@@ -9,7 +9,7 @@ import 'package:record/models/station.dart';
 import 'package:record/screens/stations/widgets/station_tile.dart';
 import 'package:record/services/audio_service.dart';
 import 'package:record/utils/pop_up_utils.dart';
-import 'package:record/widgets/bottom_player_bar.dart';
+import 'package:record/widgets/record_scaffold.dart';
 
 class StationsScreen extends StatefulWidget {
   const StationsScreen({Key? key}) : super(key: key);
@@ -37,9 +37,7 @@ class _StationsScreenState extends State<StationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Stations')),
-      bottomNavigationBar: BottomPlayerBar(),
+    return RecordScaffold(
       body: BlocConsumer<RecordCubit, RecordState>(
         bloc: recordCubit,
         listener: (BuildContext context, RecordState state) {

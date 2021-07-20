@@ -8,7 +8,7 @@ import 'package:record/screens/home/widgets/station_circle_widget.dart';
 import 'package:record/screens/stations/stations_screen.dart';
 import 'package:record/utils/navigation.dart';
 import 'package:record/utils/pop_up_utils.dart';
-import 'package:record/widgets/bottom_player_bar.dart';
+import 'package:record/widgets/record_scaffold.dart';
 import 'package:record/widgets/swiper_carousel.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,9 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Radio Record Lite')),
-      bottomNavigationBar: BottomPlayerBar(),
+    return RecordScaffold(
       body: BlocConsumer<RecordCubit, RecordState>(
         bloc: recordCubit,
         listener: (BuildContext context, RecordState state) {
